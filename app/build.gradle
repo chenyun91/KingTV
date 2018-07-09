@@ -1,30 +1,31 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
 apply plugin: 'com.neenbedankt.android-apt'
-apply from: 'tinker-support.gradle'
+//apply from: 'tinker-support.gradle'
 
 android {
     signingConfigs {
-        config {
 
-            //加载资源
-            Properties properties = new Properties()
-            InputStream inputStream = project.rootProject.file('local.properties').newDataInputStream() ;
-            properties.load( inputStream )
-
-            //读取文件
-            def storeFileDir = properties.getProperty('storeFile.file')
-            storeFile file( storeFileDir )
-
-            //读取字段
-            def key_keyAlias = properties.getProperty( 'keyAlias' )
-            def key_keyPassword = properties.getProperty( 'keyPassword' ) ;
-            def key_storePassword = properties.getProperty( 'storePassword' ) ;
-
-            keyAlias key_keyAlias
-            keyPassword key_keyPassword
-            storePassword key_storePassword
-        }
+//        config {
+//
+//            //加载资源
+//            Properties properties = new Properties()
+//            InputStream inputStream = project.rootProject.file('local.properties').newDataInputStream() ;
+//            properties.load( inputStream )
+//
+//            //读取文件
+//            def storeFileDir = properties.getProperty('storeFile.file')
+//            storeFile file( storeFileDir )
+//
+//            //读取字段
+//            def key_keyAlias = properties.getProperty( 'keyAlias' )
+//            def key_keyPassword = properties.getProperty( 'keyPassword' ) ;
+//            def key_storePassword = properties.getProperty( 'storePassword' ) ;
+//
+//            keyAlias key_keyAlias
+//            keyPassword key_keyPassword
+//            storePassword key_storePassword
+//        }
     }
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
@@ -35,22 +36,27 @@ android {
         versionCode 3
         versionName "1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        multiDexEnabled true
+        //在build.gradle同目录下创建multiDexKeep.pro
+//        multiDexKeepProguard file('multiDexKeep.pro')//腾讯bugly的类放到主dex
         ndk {
             // 设置支持的SO库架构
-            abiFilters 'armeabi', 'armeabi-v7a'//, 'x86', 'x86_64', 'arm64-v8a'
+            abiFilters 'armeabi', 'armeabi-v7a', 'x86' //,'x86_64', 'arm64-v8a'
         }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+//            signingConfig signingConfigs.config
         }
     }
+    //configurations {
+//    all*.exclude group: 'com.android.support', module: 'support-compat'  //包重复
+//}
 }
 
-greendao{
+greendao {
     schemaVersion 2
     targetGenDir 'src/main/java'
     daoPackage 'com.king.tv.dao.greendao'
@@ -61,8 +67,8 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.android.support:design:24.2.+'
+//    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile 'com.android.support:design:24.1.+'
     compile 'com.android.support:cardview-v7:24.1.+'
     testCompile 'junit:junit:4.12'
     compile 'com.hannesdorfmann.mosby:mvp:2.0.1'
@@ -74,7 +80,9 @@ dependencies {
     compile 'io.reactivex:rxjava:1.1.6'
     compile 'com.jude:easyrecyclerview:4.3.7'
     compile 'jp.wasabeef:glide-transformations:2.0.1'
-    compile 'com.jakewharton:butterknife:8.5.1'
+    compile('com.jakewharton:butterknife:8.5.1') {
+        exclude group: 'com.android.support', module: 'support-compat'
+    }
     apt 'com.jakewharton:butterknife-compiler:8.5.1'
 //    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     compile 'com.google.dagger:dagger:2.9'
@@ -98,10 +106,10 @@ dependencies {
     //    compile 'com.tencent.tinker:tinker-android-lib:1.7.7'
     // 多dex配置
     compile 'com.android.support:multidex:1.0.1'
-    //sdk
-    compile 'com.tencent.bugly:crashreport_upgrade:latest.release'
-    //ndk
-    compile 'com.tencent.bugly:nativecrashreport:latest.release'
+//    //sdk
+//    compile 'com.tencent.bugly:crashreport_upgrade:latest.release'
+//    //ndk
+//    compile 'com.tencent.bugly:nativecrashreport:latest.release'
 
 }
 
